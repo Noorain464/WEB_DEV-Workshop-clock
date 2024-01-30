@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beautiful Clock</title>
+    <style>
+        body {
+            background-color: #2c3e50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        #clock-container {
+            height: 300px;
+            width: 300px;
+            border-radius: 50%;
+            position: relative;
+            background: radial-gradient(circle, #3498db, #2980b9);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #second-hand, #minute-hand, #hour-hand {
+            position: absolute;
+            transform-origin: left;
+            top: 50%;
+            left: 50%;
+        }
+
+        #second-hand {
+            height: 2px;
+            width: 125px;
+            border-style: solid;
+            border-color: #ecf0f1;
+            border-width: 2px;
+            transform: rotate(-90deg);
+            z-index: 3;
+        }
+
+        #minute-hand {
+            height: 4px;
+            width: 120px;
+            border-style: solid;
+            border-color: #ecf0f1;
+            border-width: 3px;
+            transform: rotate(-90deg);
+            z-index: 2;
+        }
+
+        #hour-hand {
+            height: 6px;
+            width: 100px;
+            border-style: solid;
+            border-color: #ecf0f1;
+            border-width: 4px;
+            transform: rotate(-90deg);
+            z-index: 1;
+        }
+
+        /* Add a decorative pattern to the clock */
+        #clock-container::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('https://source.unsplash.com/300x300/?pattern') repeat;
+            opacity: 0.3;
+            border-radius: 50%;
+        }
+
+        #clock-container.clicked {
+            transform: scale(1.2);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div id="clock-container" onclick="toggleClock()">
+        <div id="second-hand"></div>
+        <div id="minute-hand"></div>
+        <div id="hour-hand"></div>
+    </div>
+    <script>
+       var intervalId;
+    var seconds = 0;
+    var minutes = 0;
+    var hours = 0;
+    var isClockRunning = false;
+
+    // Function to initialize the clock with the current time
+    var initializeClock = function() {
+        var currentTime = new Date();
+        seconds = currentTime.getSeconds();
+        minutes = currentTime.getMinutes();
+        hours = currentTime.getHours() % 12;
+
+        updateClockHands();
+
+        // Uncomment the line below if you want the clock to start automatically
+        // startClock();
+    };
+
+    var startClock = function() {
+        if (!isClockRunning) {
+            intervalId = setInterval(tickSecond, 1000);
+            isClockRunning = true;
+        }
+    }
+
+    var stopClock = function() {
+        clearInterval(intervalId);
+        isClockRunning = false;
+    }
+
+    var toggleClock = function() {
+        var clockContainer = document.getElementById("clock-container");
+
+        if (isClockRunning) {
+            stopClock();
+        } else {
+            startClock();
+        }
+
+        // Add or remove 'clicked' class to apply styling changes
+        clockContainer.classList.toggle("clicked", isClockRunning);
+    }
+
+    var tickSecond = function() {
+        seconds = (seconds + 1) % 60;
+        updateClockHands();
+        
+        if (seconds % 60 === 0) {
+            minutes = (minutes + 1) % 60;
+            updateClockHands();
+            
+            if (minutes % 60 === 0) {
+                hours = (hours + 1) % 12;
+                updateClockHands();
+            }
+        }
+    };
+
+    var updateClockHands = function() {
+        var secondHand = document.getElementById("second-hand");
+        var minuteHand = document.getElementById("minute-hand");
+        var hourHand = document.getElementById("hour-hand");
+
+        secondHand.style.transform = "rotate(" + (seconds * 6 - 90) + "deg)";
+        minuteHand.style.transform = "rotate(" + (minutes * 6 - 90) + "deg)";
+        hourHand.style.transform = "rotate(" + (hours * 30 - 90) + "deg)";
+    }
+
+    // Call the initializeClock function when the page loads
+    initializeClock();
+    </script>
+</body>
+</html>
+
+
+
